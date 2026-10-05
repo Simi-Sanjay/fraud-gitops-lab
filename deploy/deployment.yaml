@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fraud-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: fraud-service
+    spec:
+      containers:
+        - name: app
+          image: fraud-service:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MODEL_CONFIG
+              value: /etc/fraud/model.yaml
+          volumeMounts:
+            - name: model-config
+              mountPath: /etc/fraud
+              readOnly: true
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: model-config
+          configMap:
+            name: model-config

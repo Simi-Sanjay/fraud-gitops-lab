@@ -1,0 +1,3 @@
+# GitOps source of truth for the scoring service.
+# Change active_model through a commit + push; Argo CD makes the cluster match.
+active_model: fraud_model_v2.pkl

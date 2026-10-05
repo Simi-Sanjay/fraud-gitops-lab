@@ -1,0 +1,9 @@
+.git
+data
+alerts
+docs
+scripts
+deploy
+argocd
+__pycache__
+*.md
